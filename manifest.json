@@ -1,0 +1,9 @@
+{
+  "name": "مطعم ابو نجيب",
+  "short_name": "ابو نجيب",
+  "description": "منيو مطعم ابو نجيب — الكص الطيب والمقبلات",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#faf6f0",
+  "theme_color": "#c08238"
+}
