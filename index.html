@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
@@ -2720,14 +2721,10 @@
        DYNAMIC SUGGESTIONS MAP
        ───────────────────────────────────────────────── */
     const SUGGEST_MAP = {
-      sandwiches: ['drinks', 'plates'],
-      rolls:      ['drinks', 'plates'],
-      meals:      ['drinks'],
-      lamma:      ['drinks', 'plates'],
-      plates:     ['drinks', 'mansaf'],
-      mansaf:     ['drinks'],
-      weights:    ['drinks'],
-      drinks:     ['sandwiches', 'rolls'],
+      chicken: ['drinks', 'extras'],
+      meat:    ['drinks', 'extras'],
+      extras:  ['drinks'],
+      drinks:  ['chicken', 'meat'],
     };
     let CATS = [];
     let DB = {};
@@ -2774,6 +2771,16 @@
       } else if (typeof initialData !== 'undefined' && initialData.categories) {
         CATS = initialData.categories;
       }
+
+      // Firebase returns categories as an object (key-sorted), so honour the
+      // explicit `order` field, falling back to the order in initialData.
+      const CAT_ORDER = (typeof initialData !== 'undefined' && initialData.categories)
+        ? initialData.categories.map(c => c.id) : [];
+      CATS = CATS.slice().sort((a, b) => {
+        const ao = a.order != null ? a.order : (CAT_ORDER.indexOf(a.id) + 1 || 99);
+        const bo = b.order != null ? b.order : (CAT_ORDER.indexOf(b.id) + 1 || 99);
+        return ao - bo;
+      });
 
       // Reset DB and build from categories
       DB = {};
@@ -2823,10 +2830,10 @@
     }
 
     const FEAT = [
-      { id: 201, name: 'ربع كيلو شاورما دجاج', tag: 'الطعم العراقي الأصيل', price: 12500, col: 'linear-gradient(135deg,#c08238,#8c581c)' },
-      { id: 202, name: 'شاورما دجاج بالصمون الفرنسي', tag: 'صمون فرنسي مقرمش', price: 6000, col: 'linear-gradient(135deg,#d99e56,#a06e30)' },
-      { id: 206, name: 'شاورما لحم بالصمون الحجري', tag: 'لحم عراقي بلدي', price: 7500, col: 'linear-gradient(135deg,#a67c52,#6a4c2f)' },
-      { id: 207, name: 'شاورما دجاج بالصمون الحجي', tag: 'طازج ولذيذ', price: 5000, col: 'linear-gradient(135deg,#b8772a,#7b4c13)' }
+      { id: 101, name: 'كص دجاج فرنسي سبيشل', tag: 'الأكثر طلباً', price: 5500, col: 'linear-gradient(135deg,#c08238,#8c581c)' },
+      { id: 201, name: 'لفة كص لحم حجري', tag: 'لحوم عراقية ١٠٠٪', price: 6500, col: 'linear-gradient(135deg,#a67c52,#6a4c2f)' },
+      { id: 203, name: 'ماعون حمص باللحمة', tag: 'حمص بطحينة مع اللحم', price: 7500, col: 'linear-gradient(135deg,#d99e56,#a06e30)' },
+      { id: 102, name: 'لفة كص دجاج حجري', tag: 'صمون حجري عراقي', price: 4000, col: 'linear-gradient(135deg,#b8772a,#7b4c13)' }
     ];
 
     let cart = [];
@@ -3075,16 +3082,16 @@
     ══════════════════════════════ */
     let smartTriggeredCount = 0;
     const SMART_COPIES = {
-      shawarma: {
-        msg: "برّد على قلبك 🥤 ضيف مشروب غازي بارد أو مياه معدنية مع الشاورما اللذيذة!",
+      chicken: {
+        msg: "برّد على قلبك 🥤 ضيف مشروب بارد أو ماء مع كص الدجاج!",
         suggestCat: 'drinks'
       },
-      meals: {
-        msg: "اللمة ما تكمل بدون بيبسي بارد! 🧊 ضيف مشروب غازي لوجبتك!",
+      meat: {
+        msg: "كص اللحم ما يكمل بدون بارد! 🧊 ضيف مشروب لطلبك!",
         suggestCat: 'drinks'
       },
-      rice: {
-        msg: "ضيف مشروب غازي بارد يكمل طعم الريزو المميز! 🥤",
+      extras: {
+        msg: "كمّل الماعون بمشروب بارد 🥤",
         suggestCat: 'drinks'
       }
     };
